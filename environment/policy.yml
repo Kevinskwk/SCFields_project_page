@@ -1,0 +1,47 @@
+name: scfields-policy
+channels:
+  - pytorch
+  - pytorch3d
+  - nvidia
+  - conda-forge
+dependencies:
+  - python=3.9
+  - pip
+  - pytorch=2.1.0
+  - torchvision=0.16.0
+  - pytorch-cuda=11.8
+  - pytorch3d=0.7.5
+  - numpy=1.26.4
+  - scipy
+  - scikit-learn
+  - matplotlib
+  - pandas
+  - zarr
+  - numcodecs
+  - imagecodecs
+  - h5py
+  - numba
+  - filelock
+  - pip:
+      - numpy==1.26.4
+      - hydra-core
+      - omegaconf
+      - robomimic==0.3.0
+      - diffusers==0.33.1
+      - dill==0.3.8
+      - einops
+      - atomics==1.0.3
+      - wandb
+      - opencv-python==4.9.0.80
+      - open3d
+      - pyrealsense2
+      - zerorpc
+      - click
+      - av
+      - transforms3d==0.4.2
+      - urchin==0.0.27
+      - sapien==3.0.1
+      - filterpy
+      - scikit-video
+      - PyMCubes
+      - pynput

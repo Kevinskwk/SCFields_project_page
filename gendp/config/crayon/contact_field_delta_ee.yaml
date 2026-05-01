@@ -1,0 +1,248 @@
+_target_: gendp.workspace.train_diffusion_unet_hybrid_workspace.TrainDiffusionUnetHybridWorkspace
+is_real: true
+data_root: ${SCFIELDS_ROOT}
+output_dir: ${data_root}/data/outputs/${now:%Y.%m.%d}/${now:%H.%M.%S}_${name}_${task_name}_${exp_name}
+checkpoint:
+  save_last_ckpt: true
+  save_last_snapshot: false
+  topk:
+    format_str: epoch={epoch:04d}-test_mean_score={test_mean_score:.3f}.ckpt
+    k: 5
+    mode: max
+    monitor_key: test_mean_score
+dataloader:
+  batch_size: 64
+  num_workers: 8
+  persistent_workers: true
+  pin_memory: true
+  shuffle: true
+# dataset_obs_steps: 3
+ema:
+  _target_: gendp.model.diffusion.ema_model.EMAModel
+  inv_gamma: 1.0
+  max_value: 0.9999
+  min_value: 0.0
+  power: 0.75
+  update_after_step: 0
+exp_name: n_obs_steps_3_delta_ee_no_joint_horizon_24_var_z_pos_aug_0.05
+horizon: 24
+keypoint_visible_rate: 1.0
+logging:
+  group: null
+  id: null
+  mode: online # online, offline
+  name: ${now:%Y.%m.%d}_${task_name}_${dataset_name}
+  project: gild_${task_name}
+  resume: false
+  tags:
+  - train_diffusion_unet_hybrid
+  - ${task_name}
+  - franka
+  - realsense
+  - default
+n_action_steps: 12
+n_latency_steps: 0
+n_obs_steps: 3
+name: train_diffusion_unet_hybrid
+obs_as_global_cond: true
+optimizer:
+  _target_: torch.optim.AdamW
+  betas:
+  - 0.95
+  - 0.999
+  eps: 1.0e-08
+  lr: 0.0001
+  weight_decay: 1.0e-06
+past_action_visible: false
+
+shape_meta:
+  trim_tail: 0
+  action:
+    shape:
+    - 7  # delta_pos(3) + delta_rotvec(3) + gripper_open_close(1) for delta action
+    # - 10  # pos(3) + rot6d(6) + gripper_open_close(1) for abs ee_pose
+    delta: true  # action is delta ee_pose
+  obs:
+    ee_pose:
+      type: low_dim
+      shape:
+      - 9  # pos(3) + rot6d(6)
+    # joint_pos:
+    #   type: low_dim
+    #   shape:
+    #   - 9
+    # joint_vel:
+    #   type: low_dim
+    #   shape:
+    #   - 9
+    d3fields:
+      shape:
+      - 11 # C (4 original + 3 RGB + 4 contact field channels: contact_prob + fx + fy + fz)
+      - 868 # N (256 obj + 512 env + 100 ee = 868 total points)
+      type: spatial
+      info:
+        reference_frame: robot
+        distill_dino: true
+        distill_obj: crayon_v4
+        view_keys:
+        - camera_front
+        - camera_left
+        - camera_right
+        N_gripper: 100  # End-effector points (kept for backward compatibility)
+        N_obj: 256  # Object points (from contact field config)
+        N_env: 512  # Environment points (from contact field config)
+        boundaries:
+          x_lower: 0.3
+          x_upper: 0.7
+          y_lower: -0.2
+          y_upper: 0.2
+          z_lower: -0.03
+          z_upper: 0.5
+        env_boundaries:
+          x_lower: 0.36
+          x_upper: 0.53
+          y_lower: -0.1
+          y_upper: 0.05
+          z_lower: -0.03
+          z_upper: 0.1
+        obj_boundaries:
+          x_lower: 0.3
+          x_upper: 0.7
+          y_lower: -0.2
+          y_upper: 0.15
+          z_lower: 0.0
+          z_upper: 0.25
+        gripper_crop_params:
+          tool_length: 0.15
+          tool_width: 0.04
+          gripper_finger_length: 0.1
+          safety_margin: 0.0
+          global_z_threshold: 0.01
+          auto_estimate_plane: True
+          plane_margin: 0.012
+          plane_percentile: 20
+          ransac_iterations: 50
+          ransac_distance_threshold: 0.01
+        resize_ratio: 0.5
+        add_rgb_channels: true
+        use_contact_field: true  # Enable contact field prediction
+
+  # Tactile sensor settings for data processing only (NOT used as policy input)
+  # These are used by the contact field model for prediction, but not encoded by TactileCore
+  tactile_settings:
+    tactile_left:
+      N: 7
+      M: 9
+      fps: 10
+      x0: 34.5
+      y0: 37.5
+      dx: 28.7
+      dy: 29.6
+    tactile_right:
+      N: 7
+      M: 9
+      fps: 10
+      x0: 40.6
+      y0: 46
+      dx: 28.6
+      dy: 29.1
+
+policy:
+  _target_: gendp.policy.diffusion_unet_hybrid_image_policy.DiffusionUnetHybridImagePolicy
+  cond_predict_scale: true
+  diffusion_step_embed_dim: 128
+  down_dims:
+  - 512
+  - 1024
+  - 2048
+  eval_fixed_crop: true
+  horizon: ${horizon}
+  kernel_size: 5
+  n_action_steps: ${n_action_steps}
+  n_groups: 8
+  n_obs_steps: ${n_obs_steps}
+  noise_scheduler:
+    _target_: diffusers.schedulers.scheduling_ddpm.DDPMScheduler
+    beta_end: 0.02
+    beta_schedule: squaredcos_cap_v2
+    beta_start: 0.0001
+    clip_sample: true
+    num_train_timesteps: 100
+    prediction_type: epsilon
+    variance_type: fixed_small
+  num_inference_steps: 100
+  obs_as_global_cond: true
+  obs_encoder_group_norm: true
+  feat_proc: distill # none, linear, mlp
+  compositional: false
+  shape_meta: ${shape_meta}
+
+task:
+  abs_action: false
+  dataset:
+    _target_: gendp.dataset.real_dataset.RealDataset
+    dataset_dir: ${data_root}/data/${dataset_name}
+    vis_input: false
+    horizon: ${horizon}
+    pad_after: 7
+    pad_before: 1
+    rotation_rep: rotation_6d  # for abs ee_pose only
+    seed: 42
+    n_obs_steps: ${n_obs_steps}
+    robot_name: panda
+    # exclude_colors: [yellow]
+    shape_meta: ${shape_meta}
+    use_cache: true
+    val_ratio: 0.05
+    reference_tactile_use_difference: true
+    # Contact field model settings
+    # contact_field_checkpoint_path: ${SCFIELDS_ROOT}/contact_field/checkpoints/joint_tools_mixed_focal_0.9_0.75_nobias_ref_diff_hist_smoothpc_pcd512_directional_20251101_171937/last.ckpt  # Path to contact field checkpoint
+    # contact_field_checkpoint_path: ${SCFIELDS_ROOT}/contact_field/checkpoints/concat_tools_mixed_focal_0.9_0.75_force_mag_dir_ada_weight_hist5_smoothpc_pcd256+512_20251109_122716/last.ckpt  # Path to contact field checkpoint
+    # contact_field_checkpoint_path: ${SCFIELDS_ROOT}/contact_field/checkpoints/concat_tools_mixed_1109_real_scraper_qp_dynamic_ref_20251231_170754/last.ckpt  # Path to contact field checkpoint
+    contact_field_checkpoint_path: ${SCFIELDS_ROOT}/contact_field/checkpoints/concat_tools_mixed_1109_real_scraper_corrected_lambda1_20260113_143028/last.ckpt
+    contact_field_device: cuda  # Device for contact field inference
+    # Frame filtering settings
+    filter_static_frames: true  # Enable filtering of static frames
+    filter_pos_threshold: 0.001  # Position displacement threshold in meters
+    filter_rot_threshold: 0.01  # Rotation displacement threshold in radians (~0.57 degrees)
+    filter_boundary_frames: 5  # Number of frames to keep at beginning and end
+    filter_gripper_threshold: 0.001  # Gripper displacement threshold in meters
+    filter_gripper_window: 3
+    # Data augmentation settings
+    augmentation_enabled: true  # Enable data augmentation
+    augmentation_translation_enabled: true  # Enable translation augmentation
+    augmentation_translation_range_x: 0.00  # Translation range in x-axis (meters)
+    augmentation_translation_range_y: 0.00  # Translation range in y-axis (meters)
+    augmentation_translation_range_z: 0.05  # Translation range in z-axis (meters)
+    augmentation_mirror_enabled: false  # Enable mirror augmentation
+    augmentation_probability: 0.5  # Probability of applying augmentation (0.0-1.0)
+  dataset_dir: ${data_root}/data/${dataset_name}
+  name: ${task_name}
+  shape_meta: ${shape_meta}
+  task_name: ${task_name}
+task_name: crayon_cross_contact_field
+dataset_name: crayon_cross_var_z
+training:
+  checkpoint_every: 250
+  debug: false
+  device: cuda
+  device_id: 1
+  gradient_accumulate_every: 1
+  lr_scheduler: cosine
+  lr_warmup_steps: 500
+  max_train_steps: null
+  max_val_steps: null
+  num_epochs: 1001
+  resume: false
+  rollout_every: 500
+  sample_every: 5
+  seed: 42
+  tqdm_interval_sec: 1.0
+  use_ema: true
+  val_every: 100
+val_dataloader:
+  batch_size: 64
+  num_workers: 8
+  persistent_workers: false
+  pin_memory: true
+  shuffle: false

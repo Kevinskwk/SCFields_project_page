@@ -1,0 +1,320 @@
+# Contact Field Estimation Configuration - Tactile-as-PointCloud Architecture
+# This config uses the new tactile_pointnet_concat model where:
+# - Tactile signals are converted to point cloud with force as additional channels
+# - No separate tactile encoder - forces become point features
+# - Optional: No explicit pose encoding (pose implicit in tactile point positions)
+# - Optional: Tactile reconstruction head for self-supervised learning
+
+defaults:
+  - point_encoder: pointnet
+  - _self_
+
+experiment_name: "contact_field_tools_concat"
+
+use_env_pointcloud: true
+split: "test"
+
+# Model Architecture
+model:
+  type: "tactile_pointnet_concat"  # New tactile-as-pointcloud architecture
+
+  # Tactile-as-pointcloud specific settings
+  use_pose_encoding: false  # Set to false to rely purely on spatial encoding (tactile positions encode pose)
+  reconstruct_tactile: false  # Set to true to enable tactile reconstruction head
+  tactile_channels: 3  # Number of force channels per timestep (Fx, Fy, Fz)
+
+  # Other model dimensions (only needed if use_pose_encoding=true)
+  # pose_feature_dim: 128
+
+  # Contact probability head initialization
+  contact_prob_init_bias_enabled: true
+  contact_prob_init_bias: 0.02  # Initial probability for negative bias initialization (p value)
+  # Lower values (0.001-0.01) for sparse contact, higher values (0.05-0.1) for more frequent contact
+
+# Joint Processing Configuration
+# In tactile_pointnet_concat, all points (tactile + object + environment) are processed together
+joint_processing:
+  enabled: true  # Always true for this architecture
+  label_channel: true  # Type labels: 2=tactile, 1=object, 0=environment
+
+# Data Configuration
+data:
+  max_memory_samples: 10000000  # Limit number of samples loaded into memory
+
+  # Point cloud configuration
+  use_partial_pointcloud: false
+  include_env_pointcloud: ${use_env_pointcloud}  # Must be true for joint processing
+  knn_k: 5  # Number of nearest neighbors for k-NN mapping
+  knn_range: 0.01  # Range for k-NN mapping in meters
+  dist_lambda: 100.0  # Lambda value for distance weighting
+  contact_depth_threshold: -0.005  # Depth threshold for contact force calculation
+
+  # Force propagation configuration (NEW - reduces force distribution skew)
+  force_propagation:
+    # Method for distance-based weighting
+    # Options: 'exponential' (original, sharp), 'inv_square' (recommended), 'inv_linear' (smoothest), 'gaussian'
+    weight_method: 'inv_square'  # Recommended: smoother falloff than exponential
+
+    # Lambda for distance weighting (lower = wider influence, smoother distribution)
+    dist_lambda: 50.0  # Reduced from 100.0 for wider force influence
+
+    # Clip forces above this percentile to reduce outliers
+    force_clip_percentile: 98.0  # Clip top 2% of forces (reduces max from 7N to ~0.8N)
+
+    # Normalize weights per point (prevents force accumulation from multiple contacts)
+    normalize_per_point: true
+
+    # Spatial smoothing sigma (0 = disabled, >0 = smooth but slower)
+    smooth_sigma: 0.0  # Set to 0.01 if distribution still too spiky
+
+  # Contact Probability Parameters
+  contact_L: -0.005
+  contact_alpha: 0.5
+  contact_k: 1.7
+
+  tactile_shape: [7, 9, 3]  # height x width x force_components
+  # Note: With temporal history enabled, total channels = tactile_channels * history_length
+  # Example: 3 channels/timestep × 5 timesteps = 15 total tactile channels
+
+  task: tools
+
+  # Point cloud downsampling configuration
+  point_cloud_downsampling:
+    enabled: true  # Enable point cloud downsampling
+    method: "random"  # Downsampling method: "fps" (farthest point sampling) or "random"
+    object_points: 256  # Number of object points after downsampling
+    env_points: 512  # Number of environment points after downsampling
+    # Total points processed: 126 (tactile) + 256 (object) + 512 (environment) = 894 points
+
+  # Pre-contact smoothing configuration
+  precontact_smoothing:
+    enabled: true  # Enable pre-contact smoothing
+    postcontact_enabled: true
+    method: 'linear'  # Smoothing method: 'linear' or 'constant'
+
+  # Historical data configuration
+  # IMPORTANT: In tactile-as-pointcloud, temporal history is handled as additional channels
+  # Each tactile point gets (history_length × tactile_channels) force channels
+  history:
+    enabled: true  # Enable/disable temporal history processing
+    length: 5  # Number of historical timesteps to include (including current timestep)
+    tactile_history: true  # Use tactile sensor history (becomes additional channels)
+    pose_history: true  # Use gripper pose and velocity history (only if use_pose_encoding=true)
+
+    # Note: temporal_fusion not used in concat architecture - history is just channel concatenation
+    # With length=5 and tactile_channels=3: total_tactile_channels = 5 × 3 = 15
+
+    # Additional temporal processing settings (not used in concat architecture)
+    temporal_dropout: 0.1
+    temporal_attention_heads: 4
+
+  # Reference tactile data configuration
+  reference_tactile:
+    enabled: true  # Enable/disable reference tactile data
+    n_steps: 5  # Number of initial timesteps to use for computing reference tactile data
+    method: "median"  # Method for computing reference: "median" or "mean"
+    use_difference: true  # Use difference (current - reference) instead of concatenation
+
+  # Episode filtering configuration
+  episode_filtering:
+    filter_initial_contact: true  # Filter out environments with initial contact
+    initial_contact_threshold: 0.1  # Force magnitude threshold (N) for detecting initial contact
+    filter_low_tactile: true  # Filter out environments with low tactile readings
+    low_tactile_threshold: 1e-7  # Force magnitude threshold (N) for low tactile filtering
+    low_tactile_ratio: 0.5  # Ratio of tactile readings that must be below the threshold to filter out
+
+  # Data paths
+  train_data_path: "${SCFIELDS_ROOT}/data/sim/tools/train"
+  val_data_path: "${SCFIELDS_ROOT}/data/sim/tools/val"
+  test_data_path: "${SCFIELDS_ROOT}/data/sim/tools/test"
+
+  # Grasping validation settings
+  validate_grasping: false     # Whether to filter out environments without proper grasping
+  grasp_threshold: 0.1        # Force threshold (N) for considering object as grasped
+
+  # Data augmentation
+  augmentation:
+    enabled: true
+    rotation_range: 30  # degrees - random rotation around Z-axis
+    translation_range: 0.1  # meters - random translation in x,y,z
+    noise_std: 0.001
+    point_cloud:
+      position_noise_std: 0.01
+      orientation_noise_std: 0.05
+      patch_removal:
+        enabled: true
+        num_patches: 3  # Number of patches to remove
+        patch_size_ratio: 0.05  # Fraction of points to remove per patch (5% per patch)
+        removal_probability: 0.3  # Probability of applying patch removal augmentation
+    tactile:
+      noise_std: 1e-3
+    pose:
+      noise_std: 0.005  # Standard deviation for pose position noise (meters)
+      velocity_noise_std: 0.01  # Standard deviation for velocity noise (m/s, rad/s)
+      delay_steps: 1  # Number of timesteps to delay pose data (simulate sensor delay)
+      delay_probability: 0.2  # Probability of applying delay augmentation
+
+  # Tactile data filtering (smoothing/denoising)
+  tactile_filtering:
+    enabled: true  # Set to true to enable tactile filtering
+    spatial:
+      enabled: true  # Apply spatial filtering (Gaussian smoothing)
+      method: "gaussian"  # Filtering method: "gaussian" or "savgol"
+      sigma: 0.25  # Standard deviation for Gaussian filter
+    temporal:
+      enabled: true  # Apply temporal filtering across time steps
+      window_length: 7  # Window length for temporal smoothing (must be odd)
+      polyorder: 1  # Polynomial order for Savitzky-Golay temporal filter
+
+  # Tactile data normalization
+  tactile_normalization:
+    enabled: true  # Set to true to enable tactile data normalization
+    method: "scale"  # Normalization method: "scale", "standardize", "min_max", "robust"
+    scale_factor: 1000.0  # Scale factor for "scale" method (multiply by this value)
+    clip_range: [-10.0, 10.0]  # Optional clipping range after normalization [min, max]
+    per_channel: true  # Apply normalization per channel (x, y, z components separately)
+
+# Training Configuration
+training:
+  batch_size: 320
+  num_epochs: 400
+  learning_rate: 1e-4  # Start with standard learning rate
+  weight_decay: 1e-4
+
+  # PyTorch Lightning hardware configuration
+  accelerator: "gpu"  # Options: "auto", "gpu", "cpu", "tpu"
+  devices: [0,1,2,3,4,5,6,7]      # Options: "auto", 1, [0,1,2], "0,1,2", -1 (all)
+  # devices: [0,1,2,3,4,5,6]      # Options: "auto", 1, [0,1,2], "0,1,2", -1 (all)
+  # devices: [4,5,6,7]      # Options: "auto", 1, [0,1,2], "0,1,2", -1 (all)
+  strategy: "auto"     # Options: "auto", "ddp", "ddp_spawn", "dp", "fsdp"
+  precision: 32        # Options: 32, 16, "bf16-mixed"
+
+  # Training optimization
+  gradient_clip_val: 1.0
+  accumulate_grad_batches: 1
+
+  # Learning Rate Scheduler Configuration
+  scheduler:
+    type: "plateau"
+    mode: "min"          # Reduce LR when validation loss stops decreasing
+    factor: 0.7          # More conservative reduction
+    patience: 20         # Patience for lower LR
+    threshold: 1e-5      # Smaller threshold for finer improvements
+    min_lr: 1e-7         # Lower minimum LR bound
+    verbose: true        # Print when LR is reduced
+
+  # Loss weights
+  loss:
+    contact_prob_weight: 1.0
+    contact_force_weight: 2.0
+    force_magnitude_weight: 0.0
+
+    # Tactile reconstruction loss (only used if model.reconstruct_tactile=true)
+    tactile_reconstruction_weight: 0.0  # Set to 0.1-0.5 if using reconstruction
+
+    # Contact probability loss type
+    contact_prob_loss_type: "focal"  # Options: "bce", "focal"
+    # FocalLoss parameters (only used if contact_prob_loss_type is "focal")
+    # Contact ratio: 6.0% at 0.5 threshold (severe imbalance: 94% negative, 6% positive)
+    focal_loss:
+      alpha: 0.9  # Increased from 0.9 - give MORE weight to positive class (matches 94/6 ratio)
+      gamma: 0.75   # Increased from 1.5 - focus more on hard examples
+      use_hard_labels: false  # Keep soft labels for better gradient flow
+      hard_label_cutoff: 0.5
+    bce_pos_weight: 1.0  # Only used if contact_prob_loss_type is "bce"
+
+    # Contact force loss type and configuration
+    # NOTE: With improved force distribution (5.4% high forces vs 1.85% before):
+    # - Max reduced from 7.05N to 3.29N (but 99th percentile is 1.16N)
+    # - Near-zero ratio improved: 94.5% vs 96.3%
+    # - High force examples increased 2.9x!
+    # Recommendation: Keep magnitude_direction loss but can use MSE for magnitude
+
+    contact_force_loss_type: "magnitude_direction"
+    use_magnitude_loss: false
+
+    magnitude_direction:
+      # Magnitude loss settings
+      # With better distribution, can use MSE instead of Huber
+      magnitude_loss_type: "mse"  # Changed from huber - simpler with balanced data
+      magnitude_weight: 1.5  # Increased from 1.0 - more high-force examples to learn from
+
+      # Direction loss settings
+      direction_loss_type: "cosine"  # Keep cosine - works well
+      direction_weight: 1.0  # Keep balanced with magnitude
+
+      # Threshold for direction computation (ignore very small forces)
+      magnitude_threshold: 0.005  # Lowered from 0.01 - more points have meaningful forces now
+
+      # Adaptive weighting (recommended with your distribution)
+      use_adaptive_weighting: true  # ENABLED - helps with remaining skew
+      adaptive_weighting:
+        weighting_scheme: "log_magnitude"  # Emphasize high forces (1.16N at 99th percentile)
+        min_weight: 1.0
+        max_weight: 3.0  # Reduced from 5.0 - less extreme weighting needed
+        temperature: 1.0
+
+
+  # Early stopping
+  early_stopping:
+    patience: 100
+    min_delta: 1e-5
+
+  # Validation
+  val_frequency: 1
+  save_frequency: 20
+
+# Optimization
+optimizer:
+  type: "AdamW"
+  lr: 1e-4
+  weight_decay: 1e-4
+  betas: [0.9, 0.999]
+
+# Hardware
+device: "cuda"
+num_workers: 0  # Set to 0 to avoid CUDA multiprocessing issues
+pin_memory: true
+
+# Logging
+logging:
+  log_dir: "logs"
+  experiment_name: "${experiment_name}"
+  log_frequency: 100
+  use_timestamp: true  # Create timestamped subdirectory for each run
+
+# Weights & Biases Configuration
+wandb:
+  project: "contact-field-estimation"
+  entity: null  # Set to your wandb username/team if needed
+  tags:
+    - "contact_field"
+    - "tactile_pointnet_concat"
+    - "tactile_as_pointcloud"
+    - "no_pose_encoding"
+    - "no_reconstruction"
+    - "tools_mixed"
+  notes: "Tactile-as-pointcloud architecture: tactile converted to point cloud with force channels, no explicit pose encoding, spatial reasoning only"
+  offline: false  # Set to true to log offline (for debugging)
+
+# Checkpointing
+checkpoint:
+  save_dir: "checkpoints"
+  use_timestamp: true  # Create timestamped subdirectory for each run
+  save_best: true      # Save best models based on validation loss (top-3)
+  save_latest: true    # Save the latest model checkpoint
+  resume_from: null
+
+# Resume training from checkpoint (can be overridden via command line)
+resume_from: null
+
+# Testing/Evaluation
+evaluation:
+  metrics:
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "f1_score"
+    - "force_mse"
+  visualize_predictions: true
+  save_predictions: true

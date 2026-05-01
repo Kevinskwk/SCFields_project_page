@@ -1,0 +1,32 @@
+# PointNet Point Encoder Configuration
+
+defaults:
+  - _self_
+
+# @package model
+type: "pointnet"
+feature_dim: 64  # Output feature dimension for each point
+
+# PointNet specific configuration
+pointnet:
+  0:
+    npoint: 256
+    radius: 0.01
+    nsample: 32
+    in_channel: 0
+    mlp: [64, 64, 128]
+    group_all: false
+  1:
+    npoint: 64
+    radius: 0.02
+    nsample: 64
+    in_channel: 128
+    mlp: [128, 128, 256]
+    group_all: false
+  2:
+    npoint: 16
+    radius: 0.04
+    nsample: 128
+    in_channel: 256
+    mlp: [256, 256, 512]
+    group_all: true

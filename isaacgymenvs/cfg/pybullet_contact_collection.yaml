@@ -1,0 +1,24 @@
+# PyBullet contact label generation for IsaacGym rollout files.
+defaults:
+  - data_collection
+  - _self_
+
+experiment: pybullet_contact_collection
+
+# File or directory containing IsaacGym ``*.pkl`` rollouts. A sibling
+# ``*_contact.pkl`` file is written for each input rollout.
+data_path: ${oc.env:SCFIELDS_ROOT,.}/data/sim/tools/train/scraper_8_train_0.pkl
+
+# Keep 0/null to replay all rollout timesteps.
+max_collection_steps: 0
+
+# Point counts stored in the contact label file before model-side downsampling.
+object_points: 512
+env_points: 512
+
+# Object points within this radius of a PyBullet contact are marked as contact.
+contact_radius: 0.005
+physics_timestep: 0.004166666666666667
+
+headless: true
+capture_video: false

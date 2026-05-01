@@ -1,0 +1,52 @@
+# Python/cache
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.cache/
+
+# Local environments
+.env
+.venv/
+venv/
+env/
+*.conda
+
+# Experiment outputs
+outputs/
+runs/
+logs/
+wandb/
+eval_results/
+evaluation_results/
+raw_eval_exports/
+contact_analysis_results/
+sweep_visualizations/
+calibration_images/
+figures/
+
+# Data and artifacts. Use assets/manifests/*.yaml plus release assets instead.
+data/
+datasets/
+checkpoints/
+artifacts/
+*.ckpt
+*.pt
+*.pth
+*.pkl
+*.hdf5
+*.bag
+*.zarr
+*.zip
+*.tar
+*.tar.gz
+*.mp4
+*.avi
+*.mov
+
+# Editor/system
+.vscode/
+.idea/
+.DS_Store

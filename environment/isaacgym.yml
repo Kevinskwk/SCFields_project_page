@@ -1,0 +1,25 @@
+name: scfields-isaacgym
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+dependencies:
+  - python=3.8
+  - pip
+  - pytorch
+  - torchvision
+  - pytorch-cuda=11.8
+  - numpy<1.24
+  - scipy
+  - h5py
+  - pyyaml
+  - rtree
+  - matplotlib
+  - pip:
+      - hydra-core
+      - omegaconf
+      - gym
+      - pybullet
+      - opencv-python
+      - trimesh
+      - rl-games

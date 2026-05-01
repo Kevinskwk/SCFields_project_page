@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-06KT6S0RQP"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-06KT6S0RQP');
+  </script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="canonical" href="https://kevinskwk.github.io/SCFields/">
+
+  <!-- Primary Meta Tags -->
+  <meta name="title" content="Semantic-Contact Fields for Category-Level Generalizable Tactile Tool Manipulation">
+  <meta name="description"
+    content="We propose SCFields, a representation that fuses 3D semantic affordances with dense contact estimates learned via a two-stage sim-to-real pipeline, enabling zero-shot generalization in contact-rich tool manipulation.">
+  <meta name="author" content="Kevin Yuchen Ma, Heng Zhang, Weisi Lin, Mike Zheng Shou, Yan Wu">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="article">
+  <meta property="og:title"
+    content="Semantic-Contact Fields for Category-Level Generalizable Tactile Tool Manipulation">
+  <meta property="og:description"
+    content="We propose SCFields, a representation that fuses 3D semantic affordances with dense contact estimates learned via a two-stage sim-to-real pipeline, enabling zero-shot generalization in contact-rich tool manipulation.">
+  <meta property="og:url" content="https://kevinskwk.github.io/SCFields/">
+  <meta property="og:image" content="https://kevinskwk.github.io/SCFields/static/images/teaser_v2.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt"
+    content="Semantic-Contact Fields for Category-Level Generalizable Tactile Tool Manipulation – Research Preview">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title"
+    content="Semantic-Contact Fields for Category-Level Generalizable Tactile Tool Manipulation">
+  <meta name="twitter:description"
+    content="We propose SCFields, a representation that fuses 3D semantic affordances with dense contact estimates learned via a two-stage sim-to-real pipeline, enabling zero-shot generalization in contact-rich tool manipulation.">
+  <meta name="twitter:image" content="https://kevinskwk.github.io/SCFields/static/images/teaser_v2.png">
+  <meta name="twitter:image:alt"
+    content="Semantic-Contact Fields for Category-Level Generalizable Tactile Tool Manipulation – Research Preview">
+
+  <!-- Additional SEO -->
+  <meta name="theme-color" content="#2563eb">
+  <meta name="msapplication-TileColor" content="#2563eb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://ajax.googleapis.com">
+  <link rel="preconnect" href="https://documentcloud.adobe.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+  <title>Semantic-Contact Fields for Category-Level Generalizable Tactile Tool Manipulation – Ma, Zhang, Lin, Shou, Wu |
+    Academic Research</title>
+
+  <!-- Favicon and App Icons -->
+  <!--  <link rel="icon" type="image/x-icon" href="static/images/favicon.png">-->
+  <!--  <link rel="apple-touch-icon" href="static/images/favicon.png">-->
+
+  <!-- Critical CSS - Load synchronously -->
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+
+  <!-- Non-critical CSS - Load asynchronously -->
+  <link rel="preload" href="static/css/bulma-carousel.min.css" as="style"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/bulma-slider.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/fontawesome.all.min.css" as="style"
+    onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" as="style"
+    onload="this.onload=null;this.rel='stylesheet'">
+
+  <!-- Fallback for browsers that don't support preload -->
+  <noscript>
+    <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  </noscript>
+
+  <!-- Fonts - Optimized loading -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Defer non-critical JavaScript -->
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script defer src="static/js/bulma-carousel.min.js"></script>
+  <script defer src="static/js/bulma-slider.min.js"></script>
+  <script defer src="static/js/index.js"></script>
+
+  <!-- Structured Data for Academic Papers -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "Semantic-Contact Fields for Category-Level Generalizable Tactile Tool Manipulation",
+    "description": "We propose SCFields, a representation that fuses 3D semantic affordances with dense contact estimates learned via a two-stage sim-to-real pipeline, enabling zero-shot generalization in contact-rich tool manipulation.",
+    "author": [
+      { "@type": "Person", "name": "Kevin Yuchen Ma" },
+      { "@type": "Person", "name": "Heng Zhang" },
+      { "@type": "Person", "name": "Weisi Lin" },
+      { "@type": "Person", "name": "Mike Zheng Shou" },
+      { "@type": "Person", "name": "Yan Wu" }
+    ],
+    "datePublished": "2026-02-11",
+    "publisher": { "@type": "Organization", "name": "RSS 2026" },
+    "url": "https://kevinskwk.github.io/SCFields/",
+    "image": "https://kevinskwk.github.io/SCFields/static/images/teaser_v2.png",
+    "keywords": ["tool using", "tactile sensing", "contact-rich manipulation", "robotics", "imitation learning"],
+    "abstract": "",
+    "isAccessibleForFree": true,
+    "license": "https://creativecommons.org/licenses/by/4.0/",
+    "mainEntity": { "@type": "WebPage", "@id": "https://kevinskwk.github.io/SCFields/" }
+  }
+  </script>
+
+  <!-- Website/Organization Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "SCFields",
+    "url": "https://kevinskwk.github.io/SCFields/",
+    "sameAs": [
+      "https://github.com/Kevinskwk/SCFields",
+      "https://arxiv.org/abs/2602.13833"
+    ]
+  }
+  </script>
+</head>
+
+<body>
+
+  <!-- Scroll to Top Button -->
+  <button class="scroll-to-top" onclick="scrollToTop()" title="Scroll to top" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up" aria-hidden="true"></i>
+  </button>
+
+  <main id="main-content">
+    <section class="hero">
+      <div class="hero-body">
+        <div class="container is-max-desktop">
+          <div class="columns is-centered">
+            <div class="column has-text-centered">
+              <h1 class="title is-1 publication-title">Semantic-Contact Fields for Category-Level Generalizable Tactile
+                Tool Manipulation</h1>
+              <div class="is-size-5 publication-authors">
+                <span class="author-block">
+                  <a href="https://scholar.google.com/citations?user=_6xM_IcAAAAJ&hl=en" target="_blank"
+                    rel="noopener noreferrer">Kevin Yuchen Ma</a><sup>1,2</sup>,
+                </span>
+                <span class="author-block">
+                  <a href="https://scholar.google.com/citations?view_op=list_works&hl=zh-CN&user=nv05NS8AAAAJ"
+                    target="_blank" rel="noopener noreferrer">Heng Zhang</a><sup>1,3</sup>,
+                </span>
+                <span class="author-block">
+                  <a href="https://personal.ntu.edu.sg/wslin/" target="_blank" rel="noopener noreferrer">Weisi
+                    Lin</a><sup>3</sup>,
+                </span>
+                <span class="author-block">
+                  <a href="https://sites.google.com/view/showlab" target="_blank" rel="noopener noreferrer">Mike Zheng
+                    Shou</a><sup>2</sup>,
+                </span>
+                <span class="author-block">
+                  <a href="https://yan-wu.com/" target="_blank" rel="noopener noreferrer">Yan Wu</a><sup>1</sup>
+                </span>
+              </div>
+              <div class="is-size-5 publication-authors">
+                <span class="author-block"><sup>1</sup>Robotics & Autonomous Systems Division, Institute for Infocomm
+                  Research, Agency for Science, Technology and Research (A*STAR-I2R), Singapore</span>
+                <span class="author-block"><sup>2</sup>Show Lab, National University of Singapore, Singapore</span>
+                <span class="author-block"><sup>3</sup>College of Computing and Data Science, Nanyang Technological
+                  University, Singapore</span>
+              </div>
+              <!-- <div class="publication-venue">
+                <span class="accept-badge" aria-label="Accepted at ICRA 2026">
+                  <span class="accept-badge__dot" aria-hidden="true"></span>
+                  Accepted at 2026 IEEE International Conference on Robotics & Automation (ICRA)
+                </span>
+              </div> -->
+              <div class="column has-text-centered">
+                <div class="publication-links">
+                  <span class="link-block">
+                    <a href="https://arxiv.org/pdf/2602.13833" target="_blank" rel="noopener noreferrer" class="external-link button is-normal is-rounded is-dark">
+                      <span class="icon"><i class="fas fa-file-pdf" aria-hidden="true"></i></span>
+                      <span>Paper</span>
+                    </a>
+                  </span>
+                  <span class="link-block">
+                    <a href="https://github.com/Kevinskwk/SCFields" target="_blank" rel="noopener noreferrer"
+                      class="external-link button is-normal is-rounded is-dark">
+                      <span class="icon"><i class="fab fa-github" aria-hidden="true"></i></span>
+                      <span>Code</span>
+                    </a>
+                  </span>
+                  <span class="link-block">
+                    <a href="https://arxiv.org/abs/2602.13833" target="_blank" rel="noopener noreferrer"
+                      class="external-link button is-normal is-rounded is-dark">
+                      <span class="icon"><i class="ai ai-arxiv" aria-hidden="true"></i></span>
+                      <span>arXiv</span>
+                    </a>
+                  </span>
+                  <span class="link-block">
+                    <a href="https://huggingface.co/datasets/Kevinskwk/scfields-release" target="_blank"
+                      rel="noopener noreferrer" class="external-link button is-normal is-rounded is-dark">
+                      <span class="icon"><i class="fas fa-database" aria-hidden="true"></i></span>
+                      <span>Data</span>
+                    </a>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Teaser Figure -->
+    <section class="section hero is-light">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered has-text-centered">
+          <div class="column is-four-fifths">
+            <!-- <h2 class="title is-3">Teaser</h2> -->
+            <div class="content has-text-justified">
+              <img src="static/images/teaser_v2.png" alt="First research result visualization" />
+            </div>
+            <div class="content has-text-justified" style="font-size: 0.8em; line-height: 1.4;">
+              <!-- <p> -->
+                <b>Semantic-Contact Fields (SCFields) Overview.</b>
+                <b>1. Multimodal Inputs:</b> The system takes RGB-D observations and tactile readings from GelSight sensors.
+                <b>2. SCFields Generation:</b> Our unified perception module fuses these inputs into a dense point cloud representation containing both category-level semantics (blue/green heatmap) and extrinsic contact force vectors (green arrows).
+                <b>3. Policy Execution:</b> A diffusion policy conditioned on the SCFields enables zero-shot generalization to novel tools variants (e.g., peelers of different shapes) in contact-rich tasks by reasoning about functional affordance and contact forces simultaneously.              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Teaser video -->
+    <section class="hero teaser">
+      <div class="container is-max-desktop">
+        <div class="hero-body">
+          <h2 class="title is-3 has-text-centered">Video</h2>
+          <video poster="static/images/teaser_poster.jpg" id="teaser-video" autoplay controls muted loop height="100%"
+            preload="metadata" aria-label="Teaser video">
+            <source src="static/videos/banner_video.mp4" type="video/mp4">
+          </video>
+          <!-- <h3 class="subtitle has-text-centered">
+            We propose SCFields, a representation that fuses 3D semantic affordances with dense contact estimates
+            learned via a two-stage sim-to-real pipeline, enabling zero-shot category-level generalization in
+            contact-rich tool manipulation.
+          </h3> -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Paper abstract -->
+    <section class="section hero is-light">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered has-text-centered">
+          <div class="column is-four-fifths">
+            <h2 class="title is-3">Abstract</h2>
+            <div class="content has-text-justified" style="line-height: 1.5;">
+              <p style="margin-bottom: 0.5rem;">
+                Generalizing tool manipulation requires both semantic planning and precise physical control. Modern
+                generalist robot policies, such as Vision-Language-Action (VLA) models, often lack the high-fidelity
+                physical grounding required for contact-rich tool manipulation. Conversely, existing contact-aware
+                policies that leverage tactile or haptic sensing are typically instance-specific and fail to generalize
+                across diverse tool geometries. Bridging this gap requires learning unified contact representations from
+                diverse data, yet a fundamental barrier remains: diverse real-world tactile data are prohibitive at
+                scale, while direct zero-shot sim-to-real transfer is challenging due to the complex dynamics of
+                nonlinear deformation of soft sensors.
+              </p>
+              <p style="margin-bottom: 0.5rem;">
+                To address this, we propose <b>Semantic-Contact Fields (SCFields)</b>, a unified 3D representation
+                fusing visual semantics with dense contact estimates. We enable this via a two-stage <b>Sim-to-Real
+                Contact Learning Pipeline</b>: first, we pre-train on a large simulation data set to learn general contact
+                physics; second, we fine-tune on a small set of real data, pseudo-labeled via geometric heuristics and
+                force optimization, to align sensor characteristics. This allows physical generalization to unseen
+                tools. We leverage SCFields as the dense observation input for a diffusion policy to enable robust
+                execution of contact-rich tool manipulation tasks. Experiments on scraping, crayon drawing, and peeling
+                demonstrate robust category-level generalization, significantly outperforming vision-only and
+                raw-tactile baselines.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section hero is-light">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered has-text-centered">
+          <div class="column is-four-fifths">
+            <h2 class="title is-3">Method Overview</h2>
+            <div class="content has-text-justified">
+              <img src="static/images/method_overview.png" alt="First research result visualization" />
+            </div>
+            <div class="content has-text-justified" style="line-height: 1.2;">
+              <p style="margin-bottom: 0.5rem;">
+                <b>Left: Contact Field Learning</b> Stage 1 learns the general geometry and contact physics in simulated data;
+                Stage 2 aligns sensor domain with pseudo-labeled real data.
+                <b>Right: Policy Learning</b> A Diffusion Policy is trained conditioned on the combined SCFields to achieve robust tool manipulation.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Image carousel -->
+    <!--    <section class="hero is-small">-->
+    <!--      <div class="hero-body">-->
+    <!--        <div class="container">-->
+    <!--          <div id="results-carousel-images" class="carousel results-carousel" aria-label="Image results carousel">-->
+    <!--            <div class="item">-->
+    <!--              <img src="static/images/carousel1.jpg" alt="First research result visualization" loading="lazy"/>-->
+    <!--              <h2 class="subtitle has-text-centered">First image description.</h2>-->
+    <!--            </div>-->
+    <!--            <div class="item">-->
+    <!--              <img src="static/images/carousel2.jpg" alt="Second research result visualization" loading="lazy"/>-->
+    <!--              <h2 class="subtitle has-text-centered">Second image description.</h2>-->
+    <!--            </div>-->
+    <!--            <div class="item">-->
+    <!--              <img src="static/images/carousel3.jpg" alt="Third research result visualization" loading="lazy"/>-->
+    <!--              <h2 class="subtitle has-text-centered">Third image description.</h2>-->
+    <!--            </div>-->
+    <!--            <div class="item">-->
+    <!--              <img src="static/images/carousel4.jpg" alt="Fourth research result visualization" loading="lazy"/>-->
+    <!--              <h2 class="subtitle has-text-centered">Fourth image description.</h2>-->
+    <!--            </div>-->
+    <!--          </div>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </section>-->
+
+    <!--    &lt;!&ndash; Youtube video &ndash;&gt;-->
+    <!--    <section class="hero is-small is-light">-->
+    <!--      <div class="hero-body">-->
+    <!--        <div class="container">-->
+    <!--          <h2 class="title is-3">Video Presentation</h2>-->
+    <!--          <div class="columns is-centered has-text-centered">-->
+    <!--            <div class="column is-four-fifths">-->
+    <!--              <div class="publication-video">-->
+    <!--                <iframe src="https://www.youtube.com/embed/JkaxUblCGz0" title="Video presentation" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>-->
+    <!--              </div>-->
+    <!--            </div>-->
+    <!--          </div>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </section>-->
+
+    <section class="hero is-small" style="background-color:#f7f7f7; padding: 3rem 0;">
+      <div class="hero-body">
+        <div class="container">
+          <h2 class="title is-3" style="text-align:center; margin-bottom: 2rem;">
+            Contact Field Visualization
+          </h2>
+
+          <div class="video-table-container">
+            <div class="video-table">
+              <!-- Header Row -->
+              <div class="video-table-header"></div>
+              <div class="video-table-header">RGB Front View</div>
+              <div class="video-table-header">Contact Field Prediction</div>
+
+              <!-- Row 1: scraper -->
+              <div class="video-table-label">Scraper</div>
+              <div class="video-table-cell">
+                <video src="static/videos/contact_field/episode_80_rgb_front.mp4" autoplay muted loop playsinline preload="metadata"></video>
+              </div>
+              <div class="video-table-cell">
+                <video src="static/videos/contact_field/episode_80_pred_contact_field.mp4" autoplay muted loop playsinline preload="metadata"></video>
+              </div>
+
+              <!-- Row 2: Crayon -->
+              <div class="video-table-label">Crayon</div>
+              <div class="video-table-cell">
+                <video src="static/videos/contact_field/episode_20_rgb_front.mp4" autoplay muted loop playsinline preload="metadata"></video>
+              </div>
+              <div class="video-table-cell">
+                <video src="static/videos/contact_field/episode_20_pred_contact_field.mp4" autoplay muted loop playsinline preload="metadata"></video>
+              </div>
+
+              <!-- Row 3: Peeler -->
+              <div class="video-table-label">Peeler</div>
+              <div class="video-table-cell">
+                <video src="static/videos/contact_field/episode_82_contact_field_estimation_rgb.mp4" autoplay muted loop playsinline preload="metadata"></video>
+              </div>
+              <div class="video-table-cell">
+                <video src="static/videos/contact_field/episode_82_contact_field_estimation_contact_field.mp4" autoplay muted loop playsinline preload="metadata"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <style>
+      .video-table-container {
+        display: flex;
+        justify-content: center;
+        padding: 0 1rem;
+      }
+
+      .video-table {
+        display: grid;
+        grid-template-columns: auto 1fr 1fr;
+        gap: 1rem;
+        max-width: 900px;
+        width: 100%;
+      }
+
+      .video-table-header {
+        font-weight: bold;
+        font-size: 1.1em;
+        text-align: center;
+        padding: 0.5rem;
+        background-color: rgba(0, 0, 0, 0.05);
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .video-table-label {
+        font-weight: bold;
+        font-size: 1em;
+        padding: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(0, 0, 0, 0.03);
+        border-radius: 5px;
+        writing-mode: horizontal-tb;
+      }
+
+      .video-table-cell {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .video-table-cell video {
+        width: 100%;
+        max-width: 400px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .video-table-cell video:hover {
+        transform: scale(1.03);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      @media (max-width: 768px) {
+        .video-table {
+          grid-template-columns: auto 1fr;
+          gap: 0.5rem;
+        }
+
+        .video-table-header:nth-child(3),
+        .video-table-cell:nth-child(3n) {
+          grid-column: 2;
+        }
+
+        .video-table-cell video {
+          max-width: 300px;
+        }
+      }
+    </style>
+
+    <section class="hero is-small" style="background-color:#f7f7f7; padding: 3rem 0;">
+      <div class="hero-body">
+        <div class="container">
+          <h2 class="title is-3" style="text-align:center; margin-bottom: 2rem;">
+            Real World Demos
+          </h2>
+
+          <div class="video-table-container">
+            <div class="demo-video-table">
+              <!-- Header Row -->
+              <div class="video-table-header"></div>
+              <div class="video-table-header">Seen Tool Variant</div>
+              <div class="video-table-header">Unseen Tool Variant</div>
+
+              <!-- Row 1 -->
+              <div class="video-table-label">Scraper</div>
+              <div class="video-table-cell">
+                <video src="static/videos/real_roll_out/scraper_seen_ours.mov" autoplay muted loop playsinline preload="metadata"></video>
+              </div>
+              <div class="video-table-cell">
+                <video src="static/videos/real_roll_out/scraper_unseen_ours.mov" autoplay muted loop playsinline preload="metadata"></video>
+              </div>
+
+              <!-- Row 2 -->
+              <div class="video-table-label">Crayon</div>
+              <div class="video-table-cell">
+                <video src="static/videos/real_roll_out/crayon_seen_ours.mov" autoplay muted loop playsinline preload="metadata"></video>
+              </div>
+              <div class="video-table-cell">
+                <video src="static/videos/real_roll_out/crayon_unseen_ours.mov" autoplay muted loop playsinline preload="metadata"></video>
+              </div>
+
+              <!-- Row 3 -->
+              <div class="video-table-label">Peeler</div>
+              <div class="video-table-cell">
+                <video src="static/videos/real_roll_out/peeler_seen_ours.mov" autoplay muted loop playsinline preload="metadata"></video>
+              </div>
+              <div class="video-table-cell">
+                <video src="static/videos/real_roll_out/peeler_unseen_ours.mov" autoplay muted loop playsinline preload="metadata"></video>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <style>
+      .demo-video-table {
+        display: grid;
+        grid-template-columns: auto 1fr 1fr;
+        gap: 1rem;
+        max-width: 900px;
+        width: 100%;
+      }
+
+      @media (max-width: 768px) {
+        .demo-video-table {
+          grid-template-columns: auto 1fr;
+          gap: 0.5rem;
+        }
+
+        .demo-video-table .video-table-header:nth-child(3),
+        .demo-video-table .video-table-cell:nth-child(3n) {
+          grid-column: 2;
+        }
+      }
+    </style>
+
+    <style>
+      .video-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        /* controls number per row */
+        gap: 1.5rem;
+        justify-items: center;
+        padding: 0 1rem;
+      }
+
+      .video-grid video {
+        width: 100%;
+        max-width: 260px;
+        /* adjust to control video size */
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        object-fit: cover;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      /* Subtle hover effect for professionalism */
+      .video-grid video:hover {
+        transform: scale(1.03);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Responsive tweak for small screens */
+      @media (max-width: 768px) {
+        .video-grid {
+          grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        }
+
+        .video-grid video {
+          max-width: 180px;
+        }
+      }
+    </style>
+
+    <!-- <section class="hero is-small" style="background-color:#ffffff; padding: 3rem 0;">
+      <div class="hero-body">
+        <div class="container">
+          <h2 class="title is-3" style="text-align:center; margin-bottom: 2rem;">
+            Real World Experiment Results
+          </h2>
+
+          <div class="table-container">
+            <table class="results-table">
+              <thead>
+                <tr>
+                  <th>Object</th>
+                  <th>Success/Trials</th>
+                  <th>Success Rate (%)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Bowl</td>
+                  <td>7/10</td>
+                  <td>70</td>
+                </tr>
+                <tr>
+                  <td>Chips Can</td>
+                  <td>9/10</td>
+                  <td>90</td>
+                </tr>
+                <tr>
+                  <td>Spice Can</td>
+                  <td>9/10</td>
+                  <td>90</td>
+                </tr>
+                <tr>
+                  <td>Ketchup Bottle</td>
+                  <td>9/10</td>
+                  <td>90</td>
+                </tr>
+                <tr>
+                  <td>Mug</td>
+                  <td>8/10</td>
+                  <td>80</td>
+                </tr>
+                <tr>
+                  <td>Rugby Ball</td>
+                  <td>10/10</td>
+                  <td>100</td>
+                </tr>
+                <tr>
+                  <td>Salt Box</td>
+                  <td>8/10</td>
+                  <td>80</td>
+                </tr>
+                <tr>
+                  <td>Tomato Soup Can</td>
+                  <td>8/10</td>
+                  <td>80</td>
+                </tr>
+                <tr>
+                  <td>Spam Can</td>
+                  <td>9/10</td>
+                  <td>90</td>
+                </tr>
+                <tr>
+                  <td>Paper Roll</td>
+                  <td>10/10</td>
+                  <td>100</td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th>Average</th>
+                  <th>-</th>
+                  <th style="color:#2b9348;">87</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section> -->
+
+    <!-- <style>
+      .results-table {
+        width: 100%;
+        max-width: 700px;
+        margin: 0 auto;
+        border-collapse: collapse;
+        font-family: system-ui, sans-serif;
+        text-align: center;
+        background-color: #fdfdfd;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .results-table thead {
+        background-color: #bcd2e8;
+        font-weight: bold;
+      }
+
+      .results-table th,
+      .results-table td {
+        padding: 0.6rem 1rem;
+        border-bottom: 1px solid #d9e2ec;
+      }
+
+      .results-table tbody tr:nth-child(even) {
+        background-color: #f1f5fa;
+      }
+
+      .results-table tfoot {
+        background-color: #e8eef7;
+        font-weight: bold;
+      }
+
+      .results-table tfoot th {
+        border-top: 2px solid #d9e2ec;
+      }
+    </style> -->
+
+
+    <!--     Video carousel-->
+    <!--    <section class="hero is-small">-->
+    <!--      <div class="hero-body">-->
+    <!--        <div class="container">-->
+    <!--          <h2 class="title is-3">More Videos</h2>-->
+    <!--          <div id="results-carousel-videos" class="carousel results-carousel" aria-label="Video results carousel">-->
+    <!--            <div class="item item-video1">-->
+    <!--              <video poster=id="video1" controls muted loop height="100%" preload="metadata">-->
+    <!--                <source src="static/videos/bowl.mp4" type="video/mp4">-->
+    <!--              </video>-->
+    <!--            </div>-->
+    <!--            <div class="item item-video2">-->
+    <!--              <video id="video2" controls muted loop height="100%" preload="metadata">-->
+    <!--                <source src="static/videos/chips_can.mp4" type="video/mp4">-->
+    <!--              </video>-->
+    <!--            </div>-->
+    <!--            <div class="item item-video3">-->
+    <!--              <video  id="video3" controls muted loop height="100%" preload="metadata">-->
+    <!--                <source src="static/videos/herb.mp4" type="video/mp4">-->
+    <!--              </video>-->
+    <!--            </div>-->
+    <!--                          <div class="item item-video4">-->
+    <!--              <video  id="video4" controls muted loop height="100%" preload="metadata">-->
+    <!--                <source src="static/videos/ketchup.mp4" type="video/mp4">-->
+    <!--              </video>-->
+    <!--            </div>-->
+    <!--                          <div class="item item-video5">-->
+    <!--              <video  id="video5" controls muted loop height="100%" preload="metadata">-->
+    <!--                <source src="static/videos/mug.mp4" type="video/mp4">-->
+    <!--              </video>-->
+    <!--            </div>-->
+    <!--                          <div class="item item-video6">-->
+    <!--              <video  id="video6" controls muted loop height="100%" preload="metadata">-->
+    <!--                <source src="static/videos/rugby.mp4" type="video/mp4">-->
+    <!--              </video>-->
+    <!--            </div>-->
+    <!--     <div class="item item-video7">-->
+    <!--              <video id="video7" controls muted loop height="100%" preload="metadata">-->
+    <!--                <source src="static/videos/salt_box.mp4" type="video/mp4">-->
+    <!--              </video>-->
+    <!--            </div>-->
+    <!--                   <div class="item item-video8">-->
+    <!--              <video  id="video8" controls muted loop height="100%" preload="metadata">-->
+    <!--                <source src="static/videos/soup_can.mp4" type="video/mp4">-->
+    <!--              </video>-->
+    <!--            </div>-->
+    <!--                   <div class="item item-video9">-->
+    <!--              <video   id="video9" controls muted loop height="100%" preload="metadata">-->
+    <!--                <source src="static/videos/spam.mp4" type="video/mp4">-->
+    <!--              </video>-->
+    <!--            </div>-->
+    <!--                   <div class="item item-video10">-->
+    <!--              <video  id="video10" controls muted loop height="100%" preload="metadata">-->
+    <!--                <source src="static/videos/paper.mp4" type="video/mp4">-->
+    <!--              </video>-->
+    <!--            </div>-->
+    <!--          </div>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </section>-->
+
+    <!-- Paper poster -->
+    <!--    <section class="hero is-small is-light">-->
+    <!--      <div class="hero-body">-->
+    <!--        <div class="container">-->
+    <!--          <h2 class="title">Poster</h2>-->
+    <!--          <iframe src="static/pdfs/sample.pdf" width="100%" height="550" title="Paper poster PDF"></iframe>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </section>-->
+
+    <section class="section" id="BibTeX">
+      <div class="container is-max-desktop content">
+        <div class="bibtex-header">
+          <h2 class="title">BibTeX</h2>
+          <button class="copy-bibtex-btn" onclick="copyBibTeX()" title="Copy BibTeX to clipboard"
+            aria-label="Copy BibTeX to clipboard">
+            <i class="fas fa-copy" aria-hidden="true"></i>
+            <span class="copy-text">Copy</span>
+          </button>
+        </div>
+          <pre id="bibtex-code">
+<code>@misc{ma2026semanticcontactfieldscategorylevelgeneralizable,
+    title={Semantic-Contact Fields for Category-Level Generalizable Tactile Tool Manipulation},
+    author={Kevin Yuchen Ma and Heng Zhang and Weisi Lin and Mike Zheng Shou and Yan Wu},
+    year={2026},
+    eprint={2602.13833},
+    archivePrefix={arXiv},
+    primaryClass={cs.RO},
+    url={https://arxiv.org/abs/2602.13833},
+}</code>
+          </pre>
+        </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content">
+            <p>
+              This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template"
+                target="_blank" rel="noopener noreferrer">Academic Project Page Template</a> which was adopted from the
+              <a href="https://nerfies.github.io" target="_blank" rel="noopener noreferrer">Nerfies</a> project page.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Statcounter tracking code (optional) -->
+
+</body>
+
+</html>

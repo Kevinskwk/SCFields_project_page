@@ -9,6 +9,7 @@ PRUNE_GENERATED=( \
   -path "$ROOT/outputs" -o \
   -path "$ROOT/logs" -o \
   -path "$ROOT/runs" -o \
+  -path "$ROOT/static" -o \
   -path "$ROOT/wandb" \
 )
 

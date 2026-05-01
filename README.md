@@ -35,6 +35,7 @@ Code release for **Semantic-Contact Fields for Category-Level Generalizable Tact
 - `third_party/`: required third-party or forked support code with license notices preserved.
 - `docs/`: detailed stage-by-stage instructions.
 - `scripts/`: release audit, smoke tests, asset download, and data-collection wrappers.
+- `index.html` and `static/`: project website served by GitHub Pages from the same repository.
 
 ## Quick Start
 

@@ -270,25 +270,23 @@
             <h2 class="title is-3">Abstract</h2>
             <div class="content has-text-justified" style="line-height: 1.5;">
               <p style="margin-bottom: 0.5rem;">
-                Generalizing tool manipulation requires both semantic planning and precise physical control. Modern
-                generalist robot policies, such as Vision-Language-Action (VLA) models, often lack the high-fidelity
-                physical grounding required for contact-rich tool manipulation. Conversely, existing contact-aware
-                policies that leverage tactile or haptic sensing are typically instance-specific and fail to generalize
-                across diverse tool geometries. Bridging this gap requires learning unified contact representations from
-                diverse data, yet a fundamental barrier remains: diverse real-world tactile data are prohibitive at
-                scale, while direct zero-shot sim-to-real transfer is challenging due to the complex dynamics of
-                nonlinear deformation of soft sensors.
+                Generalizing tool manipulation requires both semantic planning and precise physical control. Modern generalist robot
+                policies, such as Vision-Language-Action (VLA) models, often lack the physical grounding required for contact-rich
+                tool manipulation. Conversely, existing contact-aware policies that leverage tactile or haptic sensing are typically
+                instance-specific and fail to generalize across diverse tool geometries. Bridging this gap requires learning
+                representations that are both semantically transferable and physically grounded, yet a fundamental barrier remains:
+                diverse real-world tactile data are prohibitive to collect at scale, while direct zero-shot sim-to-real transfer is
+                challenging due to the complex nonlinear deformation of soft tactile sensors.
               </p>
               <p style="margin-bottom: 0.5rem;">
-                To address this, we propose <b>Semantic-Contact Fields (SCFields)</b>, a unified 3D representation
-                fusing visual semantics with dense contact estimates. We enable this via a two-stage <b>Sim-to-Real
-                Contact Learning Pipeline</b>: first, we pre-train on a large simulation data set to learn general contact
-                physics; second, we fine-tune on a small set of real data, pseudo-labeled via geometric heuristics and
-                force optimization, to align sensor characteristics. This allows physical generalization to unseen
-                tools. We leverage SCFields as the dense observation input for a diffusion policy to enable robust
-                execution of contact-rich tool manipulation tasks. Experiments on scraping, crayon drawing, and peeling
-                demonstrate robust category-level generalization, significantly outperforming vision-only and
-                raw-tactile baselines.
+                To address this, we propose Semantic-Contact Fields (SCFields), a unified 3D representation that fuses visual
+                semantics with dense extrinsic contact estimates, including contact probability and force. SCFields is learned through
+                a two-stage Sim-to-Real Contact Learning Pipeline: we first pre-train on large-scale simulation to learn
+                geometry-aware contact priors, then fine-tune on a small set of real data pseudo-labeled via geometric heuristics
+                and force optimization to align real tactile signals. The resulting force-aware representation serves as the dense
+                observation input to a diffusion policy, enabling physical generalization to unseen tool instances. Experiments on
+                scraping, crayon drawing, and peeling demonstrate robust category-level generalization, significantly outperforming
+                vision-only and raw-tactile baselines.
               </p>
             </div>
           </div>
